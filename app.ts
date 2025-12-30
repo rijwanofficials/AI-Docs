@@ -1,6 +1,7 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { apiRouter } from "./api/v1/routes";
 import { connectMongoDB } from "./config/mongo";
 import { connectPostgres } from "./config/postgre";
@@ -9,32 +10,41 @@ import { initEmailService } from "./service/emailHelper";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
+/* ---------- Middlewares ---------- */
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+
+app.use(express.json({ strict: false }));
+
+// app.use((req, res, next) => {
+//   console.log(
+//     "➡️",
+//     req.method,
+//     req.url,
+//     "Content-Type:",
+//     req.headers["content-type"]
+//   );
+//   next();
+// });
 
 /* ---------- Routes ---------- */
 app.use("/api/v1", apiRouter);
 
-
-/* ---------- Middlewares ---------- */
-app.use(cors());
-app.use(
-  express.json({
-    strict: false,
-  })
-);
-
-
-
-//---------- Database Connections ---------- */
+/* ---------- DB & Services ---------- */
 connectMongoDB();
 connectPostgres();
-
-// Initialize email service ONCE
 initEmailService();
 
-// Sample API for testing purpose
-app.get("/testapp", (req: Request, res: Response) => {
+/* ---------- Test ---------- */
+app.get("/testapp", (req, res) => {
   res.json({ message: "Hello from app.ts" });
 });
 

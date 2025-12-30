@@ -21,12 +21,14 @@ const signupValidator = (req: Request, res: Response, next: NextFunction) => {
 
 const loginValidator = (req: Request, res: Response, next: NextFunction) => {
   console.log("---------I am inside the loginValidator---------");
+  const { email, password } = req.body;
+  console.log({ email, password });
 
-  if (!req.body.email) {
+  if (!email) {
     return res.status(400).json({ message: "Email are required" });
   }
 
-  if (!req.body.password) {
+  if (!password) {
     return res.status(400).json({ message: "Password are required" });
   }
 

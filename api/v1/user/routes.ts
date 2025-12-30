@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { userIdValidator } from "./validator";
+import { authMiddleware } from "./middleware";
 import { getProfileController } from "./controller";
-
 
 const userRouter = Router();
 
-userRouter.get("/:id", userIdValidator, getProfileController);
+userRouter.get("/profile", authMiddleware, getProfileController);
 
-export { userRouter };
+export default userRouter;
