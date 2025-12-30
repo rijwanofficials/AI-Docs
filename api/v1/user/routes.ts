@@ -1,7 +1,10 @@
 import { Router } from "express";
+import { userIdValidator } from "./validator";
+import { getProfileController } from "./controller";
+
 
 const userRouter = Router();
 
-userRouter.get("/signup", userRouter);
-userRouter.get("/login", userRouter);
+userRouter.get("/:id", userIdValidator, getProfileController);
+
 export { userRouter };

@@ -1,9 +1,17 @@
 import { Router } from "express";
-import { loginController, signupController } from "./controller";
+import { loginController, logoutController, signupController } from "./controller";
 import { loginValidator, signupValidator } from "./validator";
+import { verifyOtpMiddleware } from "../otpMiddleware";
 
 const authRouter = Router();
 
-authRouter.post("/signup", signupValidator, signupController);
+authRouter.post(
+  "/signup",
+  signupValidator,
+  verifyOtpMiddleware,
+  signupController
+);
 authRouter.post("/login", loginValidator, loginController);
+
+authRouter.post("/logout", logoutController);
 export { authRouter };
