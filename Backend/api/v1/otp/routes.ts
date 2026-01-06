@@ -8,6 +8,7 @@ const otpRouter = Router();
 otpRouter.post("/send", sendOtpValidator, sendOtpController);
 
 // verify OTP (standalone)
+
 otpRouter.post("/verify", verifyOtpValidator, verifyOtpController);
 
 export default otpRouter;

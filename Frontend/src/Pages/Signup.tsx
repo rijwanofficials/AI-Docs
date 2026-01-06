@@ -1,35 +1,50 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../redux/store";
+import { sendOtp, signupUser, clearError } from "../redux/authSlice";
+import { ShowErrorToast, ShowSuccessToast } from "../utils/toast";
 
 function Signup() {
-  const [step, setStep] = useState<1 | 2>(1);
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+  console.log(error);
 
+  const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
   // STEP 1: Send OTP
-  const handleSendOtp = (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Send OTP to:", email);
-    // later: axios.post("/otp/send", { email })
+    dispatch(clearError());
+    const result = await dispatch(sendOtp(email));
 
-    setStep(2);
+    if (sendOtp.fulfilled.match(result)) {
+      ShowSuccessToast("OTP sent successfully");
+      setStep(2);
+    }
+
+    if (sendOtp.rejected.match(result)) {
+      ShowErrorToast(result.payload as string);
+    }
   };
 
   // STEP 2: Register
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({
-      email,
-      otp,
-      name,
-      password,
-    });
+    const result = await dispatch(signupUser({ email, otp, name, password }));
 
-    // later: axios.post("/auth/signup", { email, otp, name, password })
+    if (signupUser.fulfilled.match(result)) {
+      ShowSuccessToast("Account created successfully");
+    }
+
+    if (signupUser.rejected.match(result)) {
+      ShowErrorToast(result.payload as string);
+    }
   };
 
   return (
@@ -43,7 +58,7 @@ function Signup() {
           Secure document workflow platform
         </p>
 
-        {/* STEP 1: EMAIL */}
+        {/* STEP 1 */}
         {step === 1 && (
           <form onSubmit={handleSendOtp} className="mt-6 space-y-4">
             <div>
@@ -62,14 +77,15 @@ function Signup() {
 
             <button
               type="submit"
-              className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition"
+              disabled={loading}
+              className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition disabled:opacity-60"
             >
               Send OTP
             </button>
           </form>
         )}
 
-        {/* STEP 2: OTP + DETAILS */}
+        {/* STEP 2 */}
         {step === 2 && (
           <form onSubmit={handleRegister} className="mt-6 space-y-4">
             <div>
@@ -116,14 +132,18 @@ function Signup() {
 
             <button
               type="submit"
-              className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition"
+              disabled={loading}
+              className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition disabled:opacity-60"
             >
               Register
             </button>
 
             <button
               type="button"
-              onClick={() => setStep(1)}
+              onClick={() => {
+                dispatch(clearError());
+                setStep(1);
+              }}
               className="w-full text-sm text-blue-700 hover:underline"
             >
               Change email

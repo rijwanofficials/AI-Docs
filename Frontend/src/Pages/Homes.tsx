@@ -1,10 +1,11 @@
 function Home() {
   return (
-    <div className="flex items-center justify-center min-h-[70vh] text-center px-4">
-      <div>
+    <div className="min-h-screen flex items-center justify-center bg-blue-100">
+      <div className="text-center max-w-xl">
         <h1 className="text-4xl font-bold text-blue-900">AI Docs</h1>
-        <p className="mt-2 text-gray-600">
-          Document-based workflow system with AI assistance
+
+        <p className="mt-4 text-gray-700">
+          Secure document workflow and verification platform.
         </p>
       </div>
     </div>

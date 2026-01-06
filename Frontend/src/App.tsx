@@ -1,22 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AppLayout from "./layout/AppLayout";
-import Home from "./Pages/Homes";
-import Login from "./Pages/Login";
-import Signup from "./Pages/Signup";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "./redux/store";
+import { fetchProfile } from "./redux/authSlice";
+import AppRoutes from "./AppRoutes";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Layout Route */}
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchProfile());
+  }, [dispatch]);
+
+  return <AppRoutes />;
 }
 
 export default App;

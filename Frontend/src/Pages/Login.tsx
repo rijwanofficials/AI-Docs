@@ -1,11 +1,28 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../redux/store";
+import { loginUser } from "../redux/authSlice";
+import { ShowErrorToast, ShowSuccessToast } from "../utils/toast";
 
 function Login() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading } = useSelector((state: RootState) => state.auth);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ email, password });
+
+    const result = await dispatch(loginUser({ email, password }));
+
+    if (loginUser.fulfilled.match(result)) {
+      ShowSuccessToast("Login successful");
+    }
+
+    if (loginUser.rejected.match(result)) {
+      ShowErrorToast(result.payload as string);
+    }
   };
 
   return (
@@ -14,11 +31,12 @@ function Login() {
         <h2 className="text-2xl font-bold text-center text-blue-900">
           Login to AI Docs
         </h2>
+
         <p className="text-sm text-gray-500 text-center mt-1">
           Secure document workflow platform
         </p>
+
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -33,7 +51,6 @@ function Login() {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Password
@@ -48,16 +65,15 @@ function Login() {
             />
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition"
+            disabled={loading}
+            className="w-full bg-blue-900 text-white py-2 rounded-md hover:bg-blue-800 transition disabled:opacity-60"
           >
             Login
           </button>
         </form>
 
-        {/* Extra */}
         <div className="mt-4 text-center text-sm text-gray-600">
           Don’t have an account?{" "}
           <span className="text-blue-700 cursor-pointer hover:underline">

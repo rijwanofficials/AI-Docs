@@ -1,19 +1,65 @@
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../redux/store";
+import { logoutUser } from "../redux/authSlice";
+import { ShowSuccessToast, ShowErrorToast } from "../utils/toast";
 
 function Navbar() {
-  return (
-    <nav className="bg-blue-900 text-white px-6 py-4 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold">
-        AI Docs
-      </Link>
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
-      <div className="space-x-4 text-sm">
-        <Link to="/login" className="hover:underline">
-          Login
-        </Link>
-        <Link to="/signup" className="hover:underline">
-          Signup
-        </Link>
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  const handleLogout = async () => {
+    const result = await dispatch(logoutUser());
+
+    if (logoutUser.fulfilled.match(result)) {
+      ShowSuccessToast("Logged out successfully");
+      navigate("/");
+    }
+
+    if (logoutUser.rejected.match(result)) {
+      ShowErrorToast("Logout failed. Try again.");
+    }
+  };
+
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    isActive ? "underline font-medium" : "hover:underline";
+
+  return (
+    <nav className="w-full bg-blue-900 text-white px-6 py-3 flex justify-between items-center">
+      <NavLink to="/" className="font-bold text-lg">
+        AI Docs
+      </NavLink>
+
+      <div className="flex items-center gap-4 text-sm">
+        {!isAuthenticated && (
+          <>
+            <NavLink to="/login" className={linkClass}>
+              Login
+            </NavLink>
+            <NavLink to="/signup" className={linkClass}>
+              Signup
+            </NavLink>
+          </>
+        )}
+
+        {isAuthenticated && (
+          <>
+            <NavLink to="/profile" className={linkClass}>
+              {user?.name}
+            </NavLink>
+
+            <button
+              onClick={handleLogout}
+              className="bg-white text-blue-900 px-3 py-1 rounded hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          </>
+        )}
       </div>
     </nav>
   );
