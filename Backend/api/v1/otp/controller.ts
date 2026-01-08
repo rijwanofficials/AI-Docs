@@ -3,18 +3,12 @@ import crypto from "crypto";
 import Otp from "../../../models/otpSchema";
 import { sendOtpEmail } from "../../../service/emailHelper";
 import User from "../../../models/userSchema";
-
-// SEND OTP
-
 const OTP_LIMIT = 5;
 const OTP_WINDOW_HOURS = 3;
-
 const sendOtpController = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
 
-    // just want to check if this email exist in users collection
-    // then just return error that otp cannot be sent coz email is already registered
     const user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({
@@ -26,7 +20,6 @@ const sendOtpController = async (req: Request, res: Response) => {
       Date.now() - OTP_WINDOW_HOURS * 60 * 60 * 1000
     );
 
-    // 🔐 Count OTPs sent in last 5 hours
     const otpCount = await Otp.countDocuments({
       email,
       createdAt: { $gte: windowStart },
@@ -37,14 +30,9 @@ const sendOtpController = async (req: Request, res: Response) => {
         message: "OTP limit exceeded. Try again after 3 hours.",
       });
     }
-
     const otp = crypto.randomInt(100000, 999999).toString();
-
-    // delete previous OTPs for strict one-time use
     await Otp.deleteMany({ email });
-
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
-
     await Otp.create({
       email,
       otp,
@@ -66,7 +54,6 @@ const sendOtpController = async (req: Request, res: Response) => {
 };
 
 //VERIFY OTP (controller-only usage)
-
 const verifyOtpController = async (req: Request, res: Response) => {
   try {
     const { email, otp } = req.body;
