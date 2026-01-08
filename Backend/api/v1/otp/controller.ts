@@ -8,7 +8,6 @@ const OTP_WINDOW_HOURS = 3;
 const sendOtpController = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-
     const user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({
