@@ -204,8 +204,6 @@ const authSlice = createSlice({
       })
       .addCase(fetchProfile.rejected, (state) => {
         state.loading = false;
-        state.user = null;
-        state.isAuthenticated = false;
       })
 
       // LOGOUT

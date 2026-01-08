@@ -49,7 +49,7 @@ function Navbar() {
         {isAuthenticated && (
           <>
             <NavLink to="/profile" className={linkClass}>
-              {user?.name}
+              {user?.name || "Profile"}
             </NavLink>
 
             <button

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { loginController, logoutController, signupController } from "./controller";
 import { loginValidator, signupValidator } from "./validator";
-import { verifyOtpMiddleware } from "../otpMiddleware";
+import { verifyOtpMiddleware } from "../middleware/otpMiddleware";
 
 const authRouter = Router();
 

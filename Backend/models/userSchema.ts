@@ -7,6 +7,9 @@ export interface IUser extends Document {
   password: string;
   role: "USER" | "VERIFIER" | "ADMIN";
   isActive: boolean;
+  avatar?: string;
+  phone?: string;
+  location?: string;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -49,7 +52,6 @@ const userSchema = new mongoose.Schema<IUser>(
 
 
 //  * 🔐 Pre-save hook for password hashing TypeScript-safe
-
 userSchema.pre<IUser>("save", async function () {
   // `this` is now properly typed as IUser
   if (!this.isModified("password")) return;

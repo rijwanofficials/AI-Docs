@@ -1,9 +1,17 @@
 import { Router } from "express";
 import { authMiddleware } from "./middleware";
-import { getProfileController } from "./controller";
+import upload from "../middleware/upload";
+import { getProfileController, uploadAvatarController } from "./controller";
 
-const userRouter = Router();
 
-userRouter.get("/profile", authMiddleware, getProfileController);
+const router = Router();
 
-export default userRouter;
+router.get("/profile", authMiddleware, getProfileController);
+
+router.post(
+  "/avatar",authMiddleware,
+  upload.single("avatar"),
+  uploadAvatarController
+);
+
+export default router;

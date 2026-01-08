@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
-export interface IOtp extends mongoose.Document {
+export interface IOtp extends Document {
   email: string;
   otp: string;
   isVerified: boolean;
@@ -31,11 +31,15 @@ const otpSchema = new mongoose.Schema<IOtp>(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-
-// auto deletes OTP after expiry
+/**
+ * ⏱ Auto-delete OTP after expiry
+ * MongoDB TTL index
+ */
 otpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Otp = mongoose.model<IOtp>("Otp", otpSchema);

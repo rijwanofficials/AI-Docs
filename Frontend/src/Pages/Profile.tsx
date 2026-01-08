@@ -1,25 +1,18 @@
-import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
+import ProfileCard from "../components/ProfileCard";
+import ProfileDetails from "../components/EditableProfileDetails";
+
 
 function Profile() {
-  const { user } = useSelector((state: RootState) => state.auth);
-
-  if (!user) return null;
-
   return (
-    <div className="bg-white rounded-lg shadow p-6 max-w-lg">
-      <h2 className="text-xl font-semibold mb-4">Profile</h2>
+    <div className="min-h-[80vh] bg-gray-100 py-10">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+        {/* Left */}
+        <ProfileCard />
 
-      <div className="space-y-2 text-gray-700">
-        <p>
-          <strong>Name:</strong> {user.name}
-        </p>
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-        <p>
-          <strong>Role:</strong> {user.role}
-        </p>
+        {/* Right */}
+        <div className="md:col-span-2">
+          <ProfileDetails />
+        </div>
       </div>
     </div>
   );

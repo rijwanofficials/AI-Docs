@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Otp from "../../models/otpSchema";
+import Otp from "../../../models/otpSchema";
 
 const verifyOtpMiddleware = async (
   req: Request,
