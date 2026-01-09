@@ -44,6 +44,17 @@ const userSchema = new mongoose.Schema<IUser>(
       type: Boolean,
       default: true,
     },
+    avatar: {
+      type: String,
+    },    
+    phone: {
+      type: String,
+      trim: true, 
+    },
+    location: {
+      type: String,
+      trim: true, 
+    },
   },
   {
     timestamps: true,

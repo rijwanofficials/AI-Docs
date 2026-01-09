@@ -1,13 +1,16 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+console.log("---✅ Environment variables loaded---");
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+
 import { apiRouter } from "./api/v1/routes";
 import { connectMongoDB } from "./config/mongo";
 import { connectPostgres } from "./config/postgre";
 import { initEmailService } from "./service/emailHelper";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,17 +27,6 @@ app.use(
 
 app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
-
-// app.use((req, res, next) => {
-//   console.log(
-//     "➡️",
-//     req.method,
-//     req.url,
-//     "Content-Type:",
-//     req.headers["content-type"]
-//   );
-//   next();
-// });
 
 /* ---------- Routes ---------- */
 app.use("/api/v1", apiRouter);

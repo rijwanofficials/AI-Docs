@@ -9,6 +9,8 @@ interface User {
   name: string;
   email: string;
   role: "USER" | "ADMIN" | "VERIFIER";
+  avatar?: string;
+  
 }
 
 interface AuthState {
@@ -128,6 +130,33 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+// 🔹 Upload Avatar
+export const uploadAvatar = createAsyncThunk(
+  "auth/uploadAvatar",
+  async (file: File, thunkAPI) => {
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      const res = await fetch("http://localhost:5000/api/v1/users/avatar", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        return thunkAPI.rejectWithValue(json.message);
+      }
+
+      return json.user; // contains avatar
+    } catch {
+      return thunkAPI.rejectWithValue("Avatar upload failed");
+    }
+  }
+);
+
 /* =========================
    SLICE (Context → createContext + Provider)
 ========================= */
@@ -210,6 +239,21 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+      })
+      // AVATAR UPLOAD
+      .addCase(uploadAvatar.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.user) {
+          state.user.avatar = action.payload.avatar;
+        }
+      })
+      .addCase(uploadAvatar.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
