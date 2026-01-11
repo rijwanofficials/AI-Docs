@@ -51,7 +51,8 @@ const loginController = async (req: Request, res: Response) => {
     console.log("User found:", user);
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
+        success: false,
         message: "User does not exist",
       });
     }
@@ -75,14 +76,17 @@ const loginController = async (req: Request, res: Response) => {
     );
 
     // 🍪 Set cookie
-    res.cookie("access_token", token, {
+    res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    const { password: _, ...safeUser } = user.toObject();
+
     return res.status(200).json({
+      success: true,
       message: "Login successful",
       user: {
         id: user._id,

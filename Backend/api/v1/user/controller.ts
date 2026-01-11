@@ -17,7 +17,7 @@ export const uploadAvatarController = async (
     }
 
     const file = req.file;
-    console.log("FILE:", file);
+    // console.log("FILE:", file);
 
     if (file === undefined) {
       return res.status(400).json({
@@ -54,7 +54,7 @@ export const uploadAvatarController = async (
     }
 
     const { name, email, role, avatar } = user;
-    console.log(user.avatar);
+    // console.log(user.avatar);
 
     return res.status(200).json({
       message: "Avatar uploaded successfully",

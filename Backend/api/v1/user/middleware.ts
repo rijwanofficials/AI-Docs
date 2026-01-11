@@ -21,7 +21,7 @@ export const authMiddleware = (
 ) => {
   try {
     // 1️⃣ Read JWT from HTTP-only cookie
-    const token = req.cookies?.access_token;
+    const token = req.cookies?.token;
     console.log(req.cookies);
     console.log({ token });
 

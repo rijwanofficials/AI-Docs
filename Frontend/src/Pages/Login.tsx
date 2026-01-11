@@ -3,25 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../redux/store";
 import { loginUser } from "../redux/authSlice";
 import { ShowErrorToast, ShowSuccessToast } from "../utils/toast";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch<AppDispatch>();
   const { loading } = useSelector((state: RootState) => state.auth);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const result = await dispatch(loginUser({ email, password }));
-
-    if (loginUser.fulfilled.match(result)) {
+    const action = await dispatch(loginUser({ email, password }));
+    if (loginUser.fulfilled.match(action)) {
       ShowSuccessToast("Login successful");
-    }
-
-    if (loginUser.rejected.match(result)) {
-      ShowErrorToast(result.payload as string);
+      navigate("/");
+    } else if (loginUser.rejected.match(action)) {
+      ShowErrorToast(action.payload as string);
     }
   };
 
@@ -31,11 +29,9 @@ function Login() {
         <h2 className="text-2xl font-bold text-center text-blue-900">
           Login to AI Docs
         </h2>
-
         <p className="text-sm text-gray-500 text-center mt-1">
           Secure document workflow platform
         </p>
-
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -50,7 +46,6 @@ function Login() {
               className="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Password
